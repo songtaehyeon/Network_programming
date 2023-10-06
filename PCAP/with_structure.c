@@ -5,7 +5,7 @@
 struct ethernet {
     uint8_t dst[6];
     uint8_t src[6];
-    uint32_t type; //4 바이트
+    uint16_t type; //2 바이트
 } __attribute__((__packed__)); // 패딩 없이 구조체를 채우기 위해 사용 
 
 struct ipheader {
@@ -42,8 +42,13 @@ void packet_handler(u_char *user, const struct pcap_pkthdr *pkthdr, const u_char
 
     if (ip->protocol != IPPROTO_TCP) {
         return;
-    }//tcp 프로토콜만 받겠다
-
+    }
+    if (ntohs(eth->type) == 0x0806) {
+        //0x0806 == ARP
+        return;
+    }
+    //TCP만 받겠다는 강력한 의지
+    
     printf("Src Mac : %02X:%02X:%02X:%02X:%02X:%02X\n", eth->src[0], eth->src[1], eth->src[2], eth->src[3], eth->src[4], eth->src[5]);
     printf("Dst Mac : %02X:%02X:%02X:%02X:%02X:%02X\n", eth->dst[0], eth->dst[1], eth->dst[2], eth->dst[3], eth->dst[4], eth->dst[5]);
 
