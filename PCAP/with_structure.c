@@ -1,8 +1,7 @@
 #include <stdio.h>
-#include <stdint.h>
+#include <stdint.h> //구조체 선언을 위해 uint8같은 단위를 사용하기 위해 추가한 해더
 #include <pcap.h>
-#include <arpa/inet.h> //구조체 선언을 위해 uint8같은 단위를 사용하기 위해 추가한 해더
-
+#include <arpa/inet.h> // IP 주소를 조작하고 네트워크 관련 작업을 수행하는 데 사용되는 함수 및 데이터 유형을 제공하는 해더
 struct ethernet {
     uint8_t dst[6];
     uint8_t src[6];
@@ -56,17 +55,17 @@ void packet_handler(u_char *user, const struct pcap_pkthdr *pkthdr, const u_char
     int header_length = sizeof(struct ethernet) + (ip->headerLength * 4) + sizeof(struct tcpheader);
     if (totalBytes >= header_length) {
         printf("TCP Payload : ");
-        for (int i = header_length; i < header_length + 16; i++) { //TCP pay load 를 16 bite 만 보여주겠다 
+        for (int i = header_length; i < header_length + 16; i++) { //pay load 를 16 bite 만 보여주겠다 
             printf("%02X ", packet[i]);
         }
         printf("\n\n");
     }
 }
 
-int main() {
+int main(int argc, char *argv[]) {
     char errbuf[PCAP_ERRBUF_SIZE];
     pcap_t *handle;
-    handle = pcap_open_live("ens33", BUFSIZ, 1, 1000, errbuf); //내가 사용하는 네트워크로 설정하고 캡쳐 하겠다
+    handle = pcap_open_live(argv[1], BUFSIZ, 1, 1000, errbuf); //내가 사용하는 네트워크로 설정하고 캡쳐 하겠다
     if (handle == NULL) {
         fprintf(stderr, "NO: %s\n", errbuf);
         return 1;
