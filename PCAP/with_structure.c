@@ -40,6 +40,10 @@ void packet_handler(u_char *user, const struct pcap_pkthdr *pkthdr, const u_char
     struct ipheader *ip = (struct ipheader *)(packet + sizeof(struct ethernet)); // packet이 가리키는 위치에서 ethernet의 크기만큼 이동 해서 가리키겠다.
     struct tcpheader *tcp = (struct tcpheader *)(packet + sizeof(struct ethernet) + (ip->headerLength * 4)); // 위의 주석 + ip 헤더의 크기를 바이트 단위로 바꿔서 가리키겠다
 
+    if (ip->protocol != IPPROTO_TCP) {
+        return;
+    }//tcp 프로토콜만 받겠다
+
     printf("Src Mac : %02X:%02X:%02X:%02X:%02X:%02X\n", eth->src[0], eth->src[1], eth->src[2], eth->src[3], eth->src[4], eth->src[5]);
     printf("Dst Mac : %02X:%02X:%02X:%02X:%02X:%02X\n", eth->dst[0], eth->dst[1], eth->dst[2], eth->dst[3], eth->dst[4], eth->dst[5]);
 
